@@ -341,9 +341,22 @@
         if (this.optional(element)) {
             return true;
         }
-
-        match = new RegExp(params).exec(value);
-        return (match && (match.index === 0) && (match[0].length === value.length));
+        
+        // Validate regex pattern before using it
+        try {
+            // Limit pattern length to prevent ReDoS attacks
+            if (typeof params !== 'string' || params.length > 1000) {
+                return false;
+            }
+            // Check for potentially dangerous patterns
+            if (/(\(.*[+*].*\)|\[.*[+*].*\])[+*]/.test(params)) {
+                return false;
+            }
+            match = new RegExp(params).exec(value);
+            return (match && (match.index === 0) && (match[0].length === value.length));
+        } catch (e) {
+            return false;
+        }
     });
 
     $jQval.addMethod("nonalphamin", function (value, element, nonalphamin) {

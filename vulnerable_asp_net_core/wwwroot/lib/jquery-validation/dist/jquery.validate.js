@@ -640,7 +640,7 @@ $.extend( $.validator, {
 			.filter( function() {
 				var name = this.name || $( this ).attr( "name" ); // For contenteditable
 				if ( !name && validator.settings.debug && window.console ) {
-					console.error( "%o has no name assigned", this );
+					console.error( "Element has no name assigned" );
 				}
 
 				// Set form expando on contenteditable

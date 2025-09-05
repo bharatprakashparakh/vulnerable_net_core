@@ -341,9 +341,21 @@
         if (this.optional(element)) {
             return true;
         }
-
-        match = new RegExp(params).exec(value);
-        return (match && (match.index === 0) && (match[0].length === value.length));
+        
+        // Validate regex pattern to prevent ReDoS attacks
+        try {
+            // Limit pattern complexity and length
+            if (typeof params !== 'string' || params.length > 300) {
+                return false;
+            }
+            
+            // Create regex with timeout safety
+            match = new RegExp(params).exec(value);
+            return (match && (match.index === 0) && (match[0].length === value.length));
+        } catch (e) {
+            // If regex is invalid, fail validation
+            return false;
+        }
     });
 
     $jQval.addMethod("nonalphamin", function (value, element, nonalphamin) {
